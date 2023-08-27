@@ -1,0 +1,24 @@
+---
+- name: Install webserver
+  hosts: host1
+  become: yes
+
+  tasks:
+
+    - name: update
+      apt: update_cache=yes
+
+    - name: Install Nginx
+      apt: name=nginx state=latest
+
+      notify:
+        - restart nginx
+
+    - name: Copy Site
+      copy:
+        src: /home/pxilips/ansible/website1/index.html
+        dest: /var/www/html/index.html
+
+  handlers:
+    - name: restart nginx
+      service: name=nginx state=reloaded

@@ -1,0 +1,5 @@
+[host1]
+host1 ansible_host=192.168.119.134
+
+[host2]
+host2 ansible_host=192.168.119.138
