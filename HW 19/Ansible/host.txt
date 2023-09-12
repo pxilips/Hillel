@@ -1,0 +1,2 @@
+[jenkins]
+jenkins-master  ansible_host=35.182.83.47
