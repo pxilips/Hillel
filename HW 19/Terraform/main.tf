@@ -17,7 +17,7 @@ resource "aws_instance" "jenkins-master" {
   }
 }
 
-## Create Security Group
+# Create Security Group
 resource "aws_security_group" "jenkins-master-SG" {
   name        = "jenkins-master-SG"
     
