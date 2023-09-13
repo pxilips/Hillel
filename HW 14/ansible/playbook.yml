@@ -1,0 +1,97 @@
+---
+- name: Install soft to Server-A
+  hosts: SERVER_A
+  
+  
+##Server-A##
+  tasks:
+  - name: Install NGINX
+    apt:
+        name: nginx
+        state: present
+    become: yes 
+        
+  - name: Configure NGINX as a reverse proxy
+    template:
+      src: /home/pxilips/ansible/nginx/nginx-reverse-proxy.conf.j2
+      dest: /etc/nginx/sites-available/default
+    notify:
+      - Reload NGINX
+
+  handlers:
+  - name: Reload NGINX
+    service:
+            name: nginx
+            state: reloaded
+            become: yes
+
+##Server-B##
+- name: Install soft to Server-B
+  hosts: SERVER_B
+  
+  tasks:
+  - name: Install MySQL Server
+    apt:
+        name: mysql-server
+        update_cache: yes
+        state: present
+    become: yes
+
+  - name: start and enable mysql service
+    service:
+            name: mysql
+            state: started
+            enabled: yes
+  
+  - name: Set MySQL root password
+    shell: mysqladmin -u root password "{{mysqlrootpassword}}"
+    become: yes
+ 
+  ##Server-C##
+- name: Install soft to Server-C
+  hosts: SERVER_C
+  become: yes
+
+  tasks:
+  - name: Download and unpack latest WordPress
+    unarchive:
+        src: https://wordpress.org/latest.tar.gz
+        dest: "/var/www/{{ http_host }}"
+        remote_src: yes
+        creates: "/var/www/{{ http_host }}/wordpress"
+    tags: [ wordpress ]
+    become: yes
+
+  - name: Set ownership
+    file:
+        path: "/var/www/{{ http_host }}"
+        state: directory
+        recurse: yes
+        owner: www-data
+        group: www-data
+    tags: [ wordpress ]
+
+  - name: Set permissions for directories
+    shell: "/usr/bin/find /var/www/{{ http_host }}/wordpress/ -type d -exec chmod 750 {} \\;"
+    tags: [ wordpress ]
+
+  - name: Set permissions for files
+    shell: "/usr/bin/find /var/www/{{ http_host }}/wordpress/ -type f -exec chmod 640 {} \\;"
+    tags: [ wordpress ]
+
+  - name: Set up wp-config
+    template:
+        src: "wordpress/wp-config.php.j2"
+        dest: "/var/www/{{ http_host }}/wordpress/wp-config.php"
+    tags: [ wordpress ]
+
+  handlers:
+  - name: Reload Apache
+    service:
+        name: apache2
+        state: reloaded
+
+  - name: Restart Apache
+    service:
+        name: apache2
+        state: restarted

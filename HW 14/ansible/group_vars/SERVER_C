@@ -1,0 +1,16 @@
+---
+ansible_user                 : philipsn 
+ansible_ssh_private_key_file : /home/pxilips/.ssh/philipsn.pem
+#System Settings
+php_modules: [ 'php-curl', 'php-gd', 'php-mbstring', 'php-xml', 'php-xmlrpc', 'php-soap', 'php-intl', 'php-zip' ]
+
+#MySQL Settings
+mysql_root_password: 1234567890
+mysql_db: wordpress
+mysql_user: wordpress
+mysql_password: wordpresspassword
+
+#HTTP Settings
+http_host: html
+http_conf: default.conf
+http_port: 80
