@@ -1,4 +1,4 @@
 ---
-ansible_user                 : philipsn 
-ansible_ssh_private_key_file : /home/pxilips/.ssh/philipsn.pem
+ansible_user                 : user
+ansible_ssh_private_key_file : /home/user/.ssh/user_key.pem
 mysqlrootpassword : 1234567890
